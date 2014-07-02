@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator;
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest;
-import org.eclipse.m2e.jdt.AbstractJavaProjectConfigurator;
+import org.eclipse.m2e.jdt.AbstractSourcesGenerationProjectConfigurator;
 import org.eclipse.m2e.jdt.IClasspathDescriptor;
 import org.eclipse.m2e.maveneclipse.handler.ConfigurationHandlers;
 import org.eclipse.osgi.util.NLS;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @author Alex Clarke
  * @author Phillip Webb
  */
-public class MavenEclipseProjectConfigurator extends AbstractJavaProjectConfigurator {
+public class MavenEclipseProjectConfigurator extends AbstractSourcesGenerationProjectConfigurator {
 
 	private static Logger log = LoggerFactory.getLogger(MavenEclipseProjectConfigurator.class);
 
