@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <description>
-      Maven Integration for Eclipse
+      Maven Integration for Eclipse (maven-eclipse-plugin support)
    </description>
    <feature id="org.eclipse.m2e.maveneclipse.feature">
-      <category name="m2e"/>
+      <category name="m2emep"/>
    </feature>
-   <category-def name="m2e" label="Maven Integration for Eclipse"/>
+   <category-def name="m2emep" label="Maven Integration for Eclipse (maven-eclipse-plugin support)"/>
 </site>
