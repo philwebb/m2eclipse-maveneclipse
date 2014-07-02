@@ -1,30 +1,30 @@
 /*
- * Copyright 2000-2011 the original author or authors.
- * 
+ * Copyright 2000-2014 the original author or authors.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.eclipse.m2e.maveneclipse.handler;
 
 import org.eclipse.m2e.maveneclipse.MavenEclipseContext;
 import org.eclipse.m2e.maveneclipse.configuration.MavenEclipseConfiguration;
 
 /**
- * Strategy interface called by {@link ConfigurationHandlers} that can handle part of the <tt>maven-eclipse-plugin</tt>
- * {@link MavenEclipseConfiguration configuration}.
- * 
+ * Strategy interface called by {@link ConfigurationHandlers} that can handle part of the
+ * <tt>maven-eclipse-plugin</tt> {@link MavenEclipseConfiguration configuration}.
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
 public interface ConfigurationHandler {
 
 	/**
-	 * Determines if the handler can deal with the {@link MavenEclipseConfiguration} available in the specified
-	 * {@link MavenEclipseContext}.
-	 * 
+	 * Determines if the handler can deal with the {@link MavenEclipseConfiguration}
+	 * available in the specified {@link MavenEclipseContext}.
 	 * @param context the context
 	 * @return <tt>true</tt> if the handler supports the configuration
 	 * @see #handle(MavenEclipseContext)
@@ -32,12 +32,13 @@ public interface ConfigurationHandler {
 	boolean canHandle(MavenEclipseContext context);
 
 	/**
-	 * Handle the {@link MavenEclipseConfiguration} applying the relevant sections to the eclipse project. This method
-	 * will only be called when {@link #canHandle} returns <tt>true</tt>.
-	 * 
+	 * Handle the {@link MavenEclipseConfiguration} applying the relevant sections to the
+	 * eclipse project. This method will only be called when {@link #canHandle} returns
+	 * <tt>true</tt>.
 	 * @param context the context
 	 * @throws Exception
 	 * @see #canHandle(MavenEclipseContext)
 	 */
 	void handle(MavenEclipseContext context) throws Exception;
+
 }

@@ -1,3 +1,13 @@
+/*
+ * Copyright 2000-2014 the original author or authors.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalconfig;
 
 import java.io.File;
@@ -14,9 +24,10 @@ class LocationFileParameter extends FileParameter {
 
 	public static final String CHILD_NAME = "location";
 
-	private File locationRoot;
+	private final File locationRoot;
 
-	public LocationFileParameter(MavenEclipseContext context, ConfigurationParameter fileParameter, File locationRoot) {
+	public LocationFileParameter(MavenEclipseContext context,
+			ConfigurationParameter fileParameter, File locationRoot) {
 		super(context, fileParameter);
 		this.locationRoot = locationRoot;
 	}
@@ -30,14 +41,17 @@ class LocationFileParameter extends FileParameter {
 	protected InputStream getContent() throws Exception {
 		String location = getChildValue();
 		File locationFile;
-		if(location.startsWith("/") || location.startsWith("\\")) {
+		if (location.startsWith("/") || location.startsWith("\\")) {
 			locationFile = new File(location);
-		} else {
-			locationFile = new File(locationRoot, location);
+		}
+		else {
+			locationFile = new File(this.locationRoot, location);
 		}
 		if (!locationFile.exists()) {
-			throw new IllegalStateException("Location file " + locationFile.getAbsolutePath() + " does not exist");
+			throw new IllegalStateException("Location file "
+					+ locationFile.getAbsolutePath() + " does not exist");
 		}
 		return new FileInputStream(locationFile);
 	}
+
 }

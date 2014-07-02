@@ -1,18 +1,19 @@
 /*
- * Copyright 2000-2011 the original author or authors.
- * 
+ * Copyright 2000-2014 the original author or authors.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalprojectnatures;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -33,7 +34,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.m2e.maveneclipse.MavenEclipseContext;
 import org.eclipse.m2e.maveneclipse.configuration.ConfigurationParameter;
 import org.eclipse.m2e.maveneclipse.configuration.MavenEclipseConfiguration;
-import org.eclipse.m2e.maveneclipse.handler.additionalprojectnatures.AdditionalProjectNaturesConfigurationHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +44,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Tests for {@link AdditionalProjectNaturesConfigurationHandler}.
- * 
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
@@ -57,8 +57,11 @@ public class AdditionalProjectNaturesConfigurationHandlerTest {
 
 	private static final String INITIAL_NATURE = "initial";
 
-	private AdditionalProjectNaturesConfigurationHandler additionalProjectNaturesConfigurationHandler = new AdditionalProjectNaturesConfigurationHandler() {
-        protected org.eclipse.core.runtime.IExtensionRegistry getExtensionRegistry() {return extensionRegistry;};
+	private final AdditionalProjectNaturesConfigurationHandler additionalProjectNaturesConfigurationHandler = new AdditionalProjectNaturesConfigurationHandler() {
+		@Override
+		protected org.eclipse.core.runtime.IExtensionRegistry getExtensionRegistry() {
+			return AdditionalProjectNaturesConfigurationHandlerTest.this.extensionRegistry;
+		};
 	};
 
 	@Mock
@@ -77,82 +80,96 @@ public class AdditionalProjectNaturesConfigurationHandlerTest {
 	private ArgumentCaptor<String[]> argument;
 
 	@Mock
-    private IExtensionRegistry extensionRegistry;
-	
+	private IExtensionRegistry extensionRegistry;
+
 	@Mock
-    private IExtension extension;
-	
+	private IExtension extension;
+
 	@Before
 	public void setupBasicContextWithInitialNature() throws Exception {
-		given(context.getProject()).willReturn(project);
+		given(this.context.getProject()).willReturn(this.project);
 
-		given(project.getDescription()).willReturn(projectDescription);
+		given(this.project.getDescription()).willReturn(this.projectDescription);
 		String[] initialNatureIds = { INITIAL_NATURE };
-		given(projectDescription.getNatureIds()).willReturn(initialNatureIds);
+		given(this.projectDescription.getNatureIds()).willReturn(initialNatureIds);
 
-		given(context.getMonitor()).willReturn(monitor);
-        given(
-               extensionRegistry.getExtension( ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES,
-                                               FIRST_PROJECT_NATURE ) ).willReturn( extension );
-        given(
-              extensionRegistry.getExtension( ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES,
-                                              SECOND_PROJECT_NATURE ) ).willReturn( extension );
+		given(this.context.getMonitor()).willReturn(this.monitor);
+		given(
+				this.extensionRegistry.getExtension(ResourcesPlugin.PI_RESOURCES,
+						ResourcesPlugin.PT_NATURES, FIRST_PROJECT_NATURE)).willReturn(
+				this.extension);
+		given(
+				this.extensionRegistry.getExtension(ResourcesPlugin.PI_RESOURCES,
+						ResourcesPlugin.PT_NATURES, SECOND_PROJECT_NATURE)).willReturn(
+				this.extension);
 	}
 
 	@Test
 	public void shouldAddAdditionalProjectNaturesFilteringMissing() throws Exception {
 		// Given
 		MavenEclipseConfiguration mavenEclipseConfiguration = mock(MavenEclipseConfiguration.class);
-		given(context.getPluginConfiguration()).willReturn(mavenEclipseConfiguration);
+		given(this.context.getPluginConfiguration())
+				.willReturn(mavenEclipseConfiguration);
 		ConfigurationParameter configurationParameter = mock(ConfigurationParameter.class);
-		given(mavenEclipseConfiguration.getParamter(additionalProjectNaturesConfigurationHandler.getParamterName()))
-				.willReturn(configurationParameter);
 		given(
-				mavenEclipseConfiguration.containsParamter(additionalProjectNaturesConfigurationHandler
-						.getParamterName())).willReturn(true);
+				mavenEclipseConfiguration
+						.getParamter(this.additionalProjectNaturesConfigurationHandler
+								.getParamterName())).willReturn(configurationParameter);
+		given(
+				mavenEclipseConfiguration
+						.containsParamter(this.additionalProjectNaturesConfigurationHandler
+								.getParamterName())).willReturn(true);
 
 		List<ConfigurationParameter> projectNatureConfigurationParameters = new ArrayList<ConfigurationParameter>();
 		ConfigurationParameter firstProjectNature = createProjectNatureConfigParameter(FIRST_PROJECT_NATURE);
 		ConfigurationParameter secondProjectNature = createProjectNatureConfigParameter(SECOND_PROJECT_NATURE);
-        ConfigurationParameter missingProjectNature = createProjectNatureConfigParameter(MISSING_PROJECT_NATURE);
+		ConfigurationParameter missingProjectNature = createProjectNatureConfigParameter(MISSING_PROJECT_NATURE);
 		projectNatureConfigurationParameters.add(firstProjectNature);
 		projectNatureConfigurationParameters.add(secondProjectNature);
-        projectNatureConfigurationParameters.add(missingProjectNature);
-		given(configurationParameter.getChildren()).willReturn(projectNatureConfigurationParameters);
+		projectNatureConfigurationParameters.add(missingProjectNature);
+		given(configurationParameter.getChildren()).willReturn(
+				projectNatureConfigurationParameters);
 
 		// When
-		additionalProjectNaturesConfigurationHandler.handle(context);
+		this.additionalProjectNaturesConfigurationHandler.handle(this.context);
 
 		// Then
-		verify(projectDescription).setNatureIds(argument.capture());
-		verify(project).setDescription(projectDescription, monitor);
+		verify(this.projectDescription).setNatureIds(this.argument.capture());
+		verify(this.project).setDescription(this.projectDescription, this.monitor);
 
-		List<String> newNatureIds = Arrays.asList(argument.getValue());
-		assertThat(newNatureIds.size(), is(3));
+		List<String> newNatureIds = Arrays.asList(this.argument.getValue());
+		assertThat(newNatureIds.size(), equalTo(3));
 		assertTrue(newNatureIds.contains(INITIAL_NATURE));
 		assertTrue(newNatureIds.contains(FIRST_PROJECT_NATURE));
 		assertTrue(newNatureIds.contains(SECOND_PROJECT_NATURE));
 	}
 
 	@Test
-	public void shouldNotChangeProjectDescriptionWhenNoAdditionalProjectNaturesConfigured() throws Exception {
+	public void shouldNotChangeProjectDescriptionWhenNoAdditionalProjectNaturesConfigured()
+			throws Exception {
 		// Given
 		MavenEclipseConfiguration mavenEclipseConfiguration = mock(MavenEclipseConfiguration.class);
-		given(context.getPluginConfiguration()).willReturn(mavenEclipseConfiguration);
+		given(this.context.getPluginConfiguration())
+				.willReturn(mavenEclipseConfiguration);
 		ConfigurationParameter configurationParameter = mock(ConfigurationParameter.class);
-		given(mavenEclipseConfiguration.getParamter(additionalProjectNaturesConfigurationHandler.getParamterName()))
-				.willReturn(configurationParameter);
 		given(
-				mavenEclipseConfiguration.containsParamter(additionalProjectNaturesConfigurationHandler
-						.getParamterName())).willReturn(true);
+				mavenEclipseConfiguration
+						.getParamter(this.additionalProjectNaturesConfigurationHandler
+								.getParamterName())).willReturn(configurationParameter);
+		given(
+				mavenEclipseConfiguration
+						.containsParamter(this.additionalProjectNaturesConfigurationHandler
+								.getParamterName())).willReturn(true);
 
-		given(configurationParameter.getChildren()).willReturn(new ArrayList<ConfigurationParameter>());
+		given(configurationParameter.getChildren()).willReturn(
+				new ArrayList<ConfigurationParameter>());
 
 		// When
-		additionalProjectNaturesConfigurationHandler.handle(context);
+		this.additionalProjectNaturesConfigurationHandler.handle(this.context);
 
 		// Then
-		verify(project, never()).setDescription(any(IProjectDescription.class), eq(monitor));
+		verify(this.project, never()).setDescription(any(IProjectDescription.class),
+				eq(this.monitor));
 
 	}
 
@@ -162,11 +179,14 @@ public class AdditionalProjectNaturesConfigurationHandlerTest {
 		MavenEclipseContext context = mock(MavenEclipseContext.class);
 		MavenEclipseConfiguration configuration = mock(MavenEclipseConfiguration.class);
 		given(context.getPluginConfiguration()).willReturn(configuration);
-		given(configuration.containsParamter(additionalProjectNaturesConfigurationHandler.getParamterName()))
-				.willReturn(true);
+		given(
+				configuration
+						.containsParamter(this.additionalProjectNaturesConfigurationHandler
+								.getParamterName())).willReturn(true);
 
 		// When
-		boolean canHandle = additionalProjectNaturesConfigurationHandler.canHandle(context);
+		boolean canHandle = this.additionalProjectNaturesConfigurationHandler
+				.canHandle(context);
 
 		assertTrue(canHandle);
 	}
@@ -177,19 +197,22 @@ public class AdditionalProjectNaturesConfigurationHandlerTest {
 		MavenEclipseContext context = mock(MavenEclipseContext.class);
 		MavenEclipseConfiguration configuration = mock(MavenEclipseConfiguration.class);
 		given(context.getPluginConfiguration()).willReturn(configuration);
-		given(configuration.getParamter(additionalProjectNaturesConfigurationHandler.getParamterName())).willReturn(
-				null);
+		given(
+				configuration
+						.getParamter(this.additionalProjectNaturesConfigurationHandler
+								.getParamterName())).willReturn(null);
 
 		// When
-		boolean canHandle = additionalProjectNaturesConfigurationHandler.canHandle(context);
+		boolean canHandle = this.additionalProjectNaturesConfigurationHandler
+				.canHandle(context);
 
 		assertFalse(canHandle);
 	}
 
 	private ConfigurationParameter createProjectNatureConfigParameter(String natureId) {
 		ConfigurationParameter firstProjectNature = mock(ConfigurationParameter.class);
-		given(firstProjectNature.getName())
-				.willReturn(AdditionalProjectNaturesConfigurationHandler.PROJECT_NATURE_NAME);
+		given(firstProjectNature.getName()).willReturn(
+				AdditionalProjectNaturesConfigurationHandler.PROJECT_NATURE_NAME);
 		given(firstProjectNature.getValue()).willReturn(natureId);
 		return firstProjectNature;
 	}

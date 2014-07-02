@@ -1,12 +1,13 @@
 /*
- * Copyright 2000-2011 the original author or authors.
- * 
+ * Copyright 2000-2014 the original author or authors.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalbuildcommands;
 
 import java.util.ArrayList;
@@ -23,15 +24,17 @@ import org.eclipse.m2e.maveneclipse.handler.ConfigurationHandler;
 import org.eclipse.m2e.maveneclipse.handler.SingleParameterConfigurationHandler;
 
 /**
- * A {@link ConfigurationHandler} that deals with <tt>additionalBuildCommands</tt> from the
- * <tt>maven-eclipse-plugin</tt>.
- * 
- * This supports both ways of adding build commands as specified in the maven eclipse plugin documentation.
- * 
+ * A {@link ConfigurationHandler} that deals with <tt>additionalBuildCommands</tt> from
+ * the <tt>maven-eclipse-plugin</tt>.
+ *
+ * This supports both ways of adding build commands as specified in the maven eclipse
+ * plugin documentation.
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
-public class AdditionalBuildCommandsConfigurationHandler extends SingleParameterConfigurationHandler {
+public class AdditionalBuildCommandsConfigurationHandler extends
+		SingleParameterConfigurationHandler {
 
 	private BuildCommandFactory commandFactory = new BuildCommandFactoryImpl();
 
@@ -41,10 +44,12 @@ public class AdditionalBuildCommandsConfigurationHandler extends SingleParameter
 	}
 
 	@Override
-	protected void handle(MavenEclipseContext context, ConfigurationParameter paramter) throws Exception {
+	protected void handle(MavenEclipseContext context, ConfigurationParameter paramter)
+			throws Exception {
 		IProject project = context.getProject();
 		IProjectDescription projectDescription = project.getDescription();
-		List<ICommand> additionalBuildCommands = getAdditionalBuildCommands(paramter, projectDescription);
+		List<ICommand> additionalBuildCommands = getAdditionalBuildCommands(paramter,
+				projectDescription);
 
 		if (additionalBuildCommands.isEmpty()) {
 			return;
@@ -57,12 +62,14 @@ public class AdditionalBuildCommandsConfigurationHandler extends SingleParameter
 			allBuildCommands.put(command.getBuilderName(), command);
 		}
 
-		// Add all the additional ICommands overwriting where the builder names are identical
+		// Add all the additional ICommands overwriting where the builder names are
+		// identical
 		for (ICommand command : additionalBuildCommands) {
 			allBuildCommands.put(command.getBuilderName(), command);
 		}
 
-		ICommand[] revisedBuildSpec = allBuildCommands.values().toArray(new ICommand[allBuildCommands.size()]);
+		ICommand[] revisedBuildSpec = allBuildCommands.values().toArray(
+				new ICommand[allBuildCommands.size()]);
 		projectDescription.setBuildSpec(revisedBuildSpec);
 		project.setDescription(projectDescription, context.getMonitor());
 	}
@@ -73,7 +80,8 @@ public class AdditionalBuildCommandsConfigurationHandler extends SingleParameter
 
 		// Add a new command for each build command ConfigurationParameter
 		for (ConfigurationParameter child : paramter.getChildren()) {
-			ICommand command = commandFactory.createCommand(projectDescription, child);
+			ICommand command = this.commandFactory.createCommand(projectDescription,
+					child);
 			if (command != null) {
 				buildSpec.add(command);
 			}
@@ -88,4 +96,5 @@ public class AdditionalBuildCommandsConfigurationHandler extends SingleParameter
 	protected void setCommandFactory(BuildCommandFactory commandFactory) {
 		this.commandFactory = commandFactory;
 	}
+
 }

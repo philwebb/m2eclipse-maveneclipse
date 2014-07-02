@@ -1,3 +1,13 @@
+/*
+ * Copyright 2000-2014 the original author or authors.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalconfig;
 
 import java.io.File;
@@ -12,9 +22,9 @@ import org.eclipse.m2e.maveneclipse.configuration.ConfigurationParameter;
  */
 class FilesParameters {
 
-	private MavenEclipseContext context;
+	private final MavenEclipseContext context;
 
-	private File locationRoot;
+	private final File locationRoot;
 
 	private List<FileParameter> files;
 
@@ -31,13 +41,13 @@ class FilesParameters {
 	 * @return a list of files
 	 */
 	private List<FileParameter> getConfiguredFiles(ConfigurationParameter paramter) {
-		files = new ArrayList<FileParameter>();
+		this.files = new ArrayList<FileParameter>();
 		for (ConfigurationParameter child : paramter.getChildren()) {
 			if ("file".equals(child.getName())) {
-				files.add(newFile(child));
+				this.files.add(newFile(child));
 			}
 		}
-		return files;
+		return this.files;
 	}
 
 	/**
@@ -45,28 +55,34 @@ class FilesParameters {
 	 * @throws Exception
 	 */
 	public void copyFilesToProject() throws Exception {
-		for (FileParameter file : files) {
+		for (FileParameter file : this.files) {
 			file.copyToProject();
 		}
 	}
 
 	/**
-	 * Factory method used to create a new file. This method follows the same precedence logic as the
-	 * <tt>maven-eclipse-plugin</tt> namely: <ul> <li>content</li> <li>location</li> <li>url</li> </ul>
-	 * 
+	 * Factory method used to create a new file. This method follows the same precedence
+	 * logic as the <tt>maven-eclipse-plugin</tt> namely:
+	 * <ul>
+	 * <li>content</li>
+	 * <li>location</li>
+	 * <li>url</li>
+	 * </ul>
 	 * @param fileParameter the parameter
 	 * @return a config file instance
 	 */
 	private FileParameter newFile(ConfigurationParameter fileParameter) {
 		if (fileParameter.hasChild(ContentFileParameter.CHILD_NAME)) {
-			return new ContentFileParameter(context, fileParameter);
+			return new ContentFileParameter(this.context, fileParameter);
 		}
 		if (fileParameter.hasChild(LocationFileParameter.CHILD_NAME)) {
-			return new LocationFileParameter(context, fileParameter, locationRoot);
+			return new LocationFileParameter(this.context, fileParameter,
+					this.locationRoot);
 		}
 		if (fileParameter.hasChild(UrlFileParameter.CHILD_NAME)) {
-			return new UrlFileParameter(context, fileParameter);
+			return new UrlFileParameter(this.context, fileParameter);
 		}
 		throw new IllegalStateException("Malformed additionalConfig file paramter");
 	}
+
 }

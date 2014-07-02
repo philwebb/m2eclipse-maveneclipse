@@ -1,16 +1,16 @@
 /*
- * Copyright 2000-2011 the original author or authors.
- * 
+ * Copyright 2000-2014 the original author or authors.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.eclipse.m2e.maveneclipse.handler;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -33,7 +33,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Tests for {@link ConfigurationHandlers}.
- * 
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
@@ -51,27 +51,31 @@ public class ConfigurationHandlersTest {
 		ConfigurationHandler[] handlers = { h1, h2, h3 };
 		ConfigurationHandlers configurationHandlers = new ConfigurationHandlers(handlers);
 
-		given(h2.canHandle(context)).willReturn(true);
-		given(h3.canHandle(context)).willReturn(true);
+		given(h2.canHandle(this.context)).willReturn(true);
+		given(h3.canHandle(this.context)).willReturn(true);
 
-		configurationHandlers.handle(context);
+		configurationHandlers.handle(this.context);
 
-		verify(h1, never()).handle(context);
-		verify(h2).handle(context);
-		verify(h3).handle(context);
+		verify(h1, never()).handle(this.context);
+		verify(h2).handle(this.context);
+		verify(h3).handle(this.context);
 	}
 
 	@Test
 	public void shouldHaveDefaultHandlers() throws Exception {
-		ConfigurationHandler[] defaultHandlers = new ConfigurationHandlers().getConfigurationHandlers();
+		ConfigurationHandler[] defaultHandlers = new ConfigurationHandlers()
+				.getConfigurationHandlers();
 		Set<Class<?>> defaultHandlerClasses = new HashSet<Class<?>>();
 		for (ConfigurationHandler handler : defaultHandlers) {
 			defaultHandlerClasses.add(handler.getClass());
 		}
 		Set<Class<?>> expected = new HashSet<Class<?>>();
-		expected.addAll(Arrays.<Class<?>> asList(AdditionalBuildCommandsConfigurationHandler.class,
-				AdditionalConfigConfigurationHandler.class, AdditionalProjectFacetsConfigurationHandler.class,
+		expected.addAll(Arrays.<Class<?>> asList(
+				AdditionalBuildCommandsConfigurationHandler.class,
+				AdditionalConfigConfigurationHandler.class,
+				AdditionalProjectFacetsConfigurationHandler.class,
 				AdditionalProjectNaturesConfigurationHandler.class));
-		assertThat(defaultHandlerClasses, is(equalTo(expected)));
+		assertThat(defaultHandlerClasses, equalTo(expected));
 	}
+
 }

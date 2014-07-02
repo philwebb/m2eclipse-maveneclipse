@@ -1,12 +1,13 @@
 /*
- * Copyright 2000-2011 the original author or authors.
- * 
+ * Copyright 2000-2014 the original author or authors.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalprojectnatures;
 
 import java.util.Arrays;
@@ -27,13 +28,14 @@ import org.eclipse.m2e.maveneclipse.handler.ConfigurationHandler;
 import org.eclipse.m2e.maveneclipse.handler.SingleParameterConfigurationHandler;
 
 /**
- * A {@link ConfigurationHandler} that handles <tt>additionalprojectnatures</tt> from the <tt>maven-eclipse-plugin</tt>
- * configuration.
- * 
+ * A {@link ConfigurationHandler} that handles <tt>additionalprojectnatures</tt> from the
+ * <tt>maven-eclipse-plugin</tt> configuration.
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
-public class AdditionalProjectNaturesConfigurationHandler extends SingleParameterConfigurationHandler {
+public class AdditionalProjectNaturesConfigurationHandler extends
+		SingleParameterConfigurationHandler {
 
 	static final String PROJECT_NATURE_NAME = "projectnature";
 
@@ -46,7 +48,9 @@ public class AdditionalProjectNaturesConfigurationHandler extends SingleParamete
 		return "additionalProjectnatures";
 	}
 
-	public void handle(MavenEclipseContext context, ConfigurationParameter configurationParameter) throws Exception {
+	@Override
+	public void handle(MavenEclipseContext context,
+			ConfigurationParameter configurationParameter) throws Exception {
 		Set<String> additionalNatureIDs = new LinkedHashSet<String>();
 		for (ConfigurationParameter child : configurationParameter.getChildren()) {
 			if (PROJECT_NATURE_NAME.equals(child.getName())) {
@@ -54,19 +58,22 @@ public class AdditionalProjectNaturesConfigurationHandler extends SingleParamete
 			}
 		}
 		if (!additionalNatureIDs.isEmpty()) {
-			addAdditionalProjectNatures(context.getProject(), additionalNatureIDs, context.getMonitor());
+			addAdditionalProjectNatures(context.getProject(), additionalNatureIDs,
+					context.getMonitor());
 		}
 	}
 
-	private void addAdditionalProjectNatures(IProject project, Set<String> additionalNatureIDs, IProgressMonitor monitor)
+	private void addAdditionalProjectNatures(IProject project,
+			Set<String> additionalNatureIDs, IProgressMonitor monitor)
 			throws CoreException {
 		IExtensionRegistry extensionRegistry = getExtensionRegistry();
 		IProjectDescription projectDescription = project.getDescription();
 		Set<String> natureIds = new LinkedHashSet<String>();
 		natureIds.addAll(Arrays.asList(projectDescription.getNatureIds()));
 		for (String additionalNatureID : additionalNatureIDs) {
-			IExtension extension = extensionRegistry.getExtension(ResourcesPlugin.PI_RESOURCES,
-					ResourcesPlugin.PT_NATURES, additionalNatureID);
+			IExtension extension = extensionRegistry.getExtension(
+					ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES,
+					additionalNatureID);
 			if (extension != null) {
 				natureIds.add(additionalNatureID);
 			}
@@ -74,4 +81,5 @@ public class AdditionalProjectNaturesConfigurationHandler extends SingleParamete
 		projectDescription.setNatureIds(natureIds.toArray(new String[natureIds.size()]));
 		project.setDescription(projectDescription, monitor);
 	}
+
 }

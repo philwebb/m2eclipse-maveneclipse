@@ -1,3 +1,13 @@
+/*
+ * Copyright 2000-2014 the original author or authors.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ *
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalbuildcommands;
 
 import java.util.LinkedHashMap;
@@ -10,7 +20,7 @@ import org.eclipse.m2e.maveneclipse.configuration.ConfigurationParameter;
 
 /**
  * {@link BuildCommandFactory} class for the creation and population of {@link ICommand}s.
- * 
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
@@ -21,7 +31,8 @@ public class BuildCommandFactoryImpl implements BuildCommandFactory {
 	static final String NAME_ELEMENT_NAME = "name";
 	static final String ARGUMENTS_ELEMENT_NAME = "arguments";
 
-	public ICommand createCommand(IProjectDescription projectDescription, ConfigurationParameter parameter) {
+	public ICommand createCommand(IProjectDescription projectDescription,
+			ConfigurationParameter parameter) {
 		if (BUILD_COMMAND_ELEMENT_NAME.equals(parameter.getName())) {
 			return createBuildCommand(projectDescription, parameter);
 		}
@@ -31,14 +42,15 @@ public class BuildCommandFactoryImpl implements BuildCommandFactory {
 		return null;
 	}
 
-	private ICommand createBuildCommand(IProjectDescription projectDescription, ConfigurationParameter parameter) {
+	private ICommand createBuildCommand(IProjectDescription projectDescription,
+			ConfigurationParameter parameter) {
 		ICommand command = projectDescription.newCommand();
 
 		command.setBuilderName(parameter.getChild(NAME_ELEMENT_NAME).getValue());
 
 		Map<String, String> arguments = new LinkedHashMap<String, String>();
-		List<ConfigurationParameter> configurationParameterArguments = parameter.getChild(ARGUMENTS_ELEMENT_NAME)
-				.getChildren();
+		List<ConfigurationParameter> configurationParameterArguments = parameter
+				.getChild(ARGUMENTS_ELEMENT_NAME).getChildren();
 		for (ConfigurationParameter argumentParameter : configurationParameterArguments) {
 			arguments.put(argumentParameter.getName(), argumentParameter.getValue());
 		}
@@ -47,7 +59,8 @@ public class BuildCommandFactoryImpl implements BuildCommandFactory {
 		return command;
 	}
 
-	private ICommand createLegacyBuildCommand(IProjectDescription projectDescription, ConfigurationParameter parameter) {
+	private ICommand createLegacyBuildCommand(IProjectDescription projectDescription,
+			ConfigurationParameter parameter) {
 		ICommand command = projectDescription.newCommand();
 		command.setBuilderName(parameter.getValue());
 		return command;

@@ -1,15 +1,16 @@
 /*
- * Copyright 2000-2011 the original author or authors.
- * 
+ * Copyright 2000-2014 the original author or authors.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalconfig;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willAnswer;
@@ -45,13 +46,13 @@ import org.mockito.stubbing.Answer;
 
 /**
  * Tests for {@link AdditionalConfigConfigurationHandler}.
- * 
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
 public class AdditionalConfigConfigurationHandlerTest {
 
-	private AdditionalConfigConfigurationHandler handler = new AdditionalConfigConfigurationHandler();
+	private final AdditionalConfigConfigurationHandler handler = new AdditionalConfigConfigurationHandler();
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -62,7 +63,8 @@ public class AdditionalConfigConfigurationHandlerTest {
 	@Mock
 	private ConfigurationParameter additionalConfigParameter;
 
-	private File location = new File("./src/org/eclipse/m2e/maveneclipse/handler/additionalconfig");
+	private final File location = new File(
+			"./src/org/eclipse/m2e/maveneclipse/handler/additionalconfig");
 
 	@Mock
 	private IFile projectFile;
@@ -79,57 +81,61 @@ public class AdditionalConfigConfigurationHandlerTest {
 		File file = mock(File.class);
 		IProject project = mock(IProject.class);
 		MavenEclipseConfiguration configuration = mock(MavenEclipseConfiguration.class);
-		given(context.getMavenProject()).willReturn(mavenProject);
+		given(this.context.getMavenProject()).willReturn(mavenProject);
 		given(mavenProject.getFile()).willReturn(file);
-		given(file.getParentFile()).willReturn(location);
-		given(context.getPluginConfiguration()).willReturn(configuration);
+		given(file.getParentFile()).willReturn(this.location);
+		given(this.context.getPluginConfiguration()).willReturn(configuration);
 		given(configuration.containsParamter("additionalConfig")).willReturn(true);
-		given(configuration.getParamter("additionalConfig")).willReturn(additionalConfigParameter);
-		given(context.getProject()).willReturn(project);
-		given(project.getFile(anyString())).willReturn(projectFile);
-		given(context.getMonitor()).willReturn(monitor);
+		given(configuration.getParamter("additionalConfig")).willReturn(
+				this.additionalConfigParameter);
+		given(this.context.getProject()).willReturn(project);
+		given(project.getFile(anyString())).willReturn(this.projectFile);
+		given(this.context.getMonitor()).willReturn(this.monitor);
 		willAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				InputStream inputStream = (InputStream) invocation.getArguments()[0];
-				writtenContent = IOUtil.toString(inputStream);
+				AdditionalConfigConfigurationHandlerTest.this.writtenContent = IOUtil
+						.toString(inputStream);
 				return null;
 			}
-		}).given(projectFile).create(isA(InputStream.class), eq(true), eq(monitor));
+		}).given(this.projectFile).create(isA(InputStream.class), eq(true),
+				eq(this.monitor));
 	}
 
 	@Test
 	public void shouldNeedContentLocationOrUrl() throws Exception {
 		givenSingleChild("name", "unknown", "value");
-		thrown.expect(IllegalStateException.class);
-		thrown.expectMessage("Malformed additionalConfig file paramter");
-		handler.handle(context);
+		this.thrown.expect(IllegalStateException.class);
+		this.thrown.expectMessage("Malformed additionalConfig file paramter");
+		this.handler.handle(this.context);
 	}
 
 	@Test
 	public void shouldCopyContent() throws Exception {
 		givenSingleChild("name", "content", "value");
-		handler.handle(context);
-		assertThatFileContent(is("value"));
+		this.handler.handle(this.context);
+		assertThatFileContent(equalTo("value"));
 	}
 
 	@Test
 	public void shouldCopyLocation() throws Exception {
 		givenSingleChild("name", "location", "content.txt");
-		handler.handle(context);
-		assertThatFileContent(is("content"));
+		this.handler.handle(this.context);
+		assertThatFileContent(equalTo("content"));
 	}
 
 	@Test
 	public void shouldCopyURL() throws Exception {
 		URL url = getClass().getResource("content.txt");
 		givenSingleChild("name", "url", url.toString());
-		handler.handle(context);
-		assertThatFileContent(is("content"));
+		this.handler.handle(this.context);
+		assertThatFileContent(equalTo("content"));
 	}
 
 	private void givenSingleChild(String name, String type, String value) {
-		List<ConfigurationParameter> children = Collections.singletonList(childParameter(name, type, value));
-		given(additionalConfigParameter.getChildren()).willReturn(children);
+		List<ConfigurationParameter> children = Collections.singletonList(childParameter(
+				name, type, value));
+		given(this.additionalConfigParameter.getChildren()).willReturn(children);
 	}
 
 	private ConfigurationParameter childParameter(String name, String type, String value) {
@@ -146,8 +152,9 @@ public class AdditionalConfigConfigurationHandlerTest {
 	}
 
 	private void assertThatFileContent(Matcher<String> matcher) throws Exception {
-		verify(projectFile).create(isA(InputStream.class), eq(true), eq(monitor));
-		assertThat(writtenContent, matcher);
+		verify(this.projectFile).create(isA(InputStream.class), eq(true),
+				eq(this.monitor));
+		assertThat(this.writtenContent, matcher);
 	}
 
 }

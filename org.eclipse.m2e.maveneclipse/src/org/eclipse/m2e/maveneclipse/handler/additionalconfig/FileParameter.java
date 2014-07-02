@@ -1,3 +1,13 @@
+/*
+ * Copyright 2000-2014 the original author or authors.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalconfig;
 
 import java.io.BufferedInputStream;
@@ -16,9 +26,9 @@ import org.eclipse.m2e.maveneclipse.configuration.ConfigurationParameter;
  */
 abstract class FileParameter {
 
-	private MavenEclipseContext context;
+	private final MavenEclipseContext context;
 
-	private ConfigurationParameter fileParameter;
+	private final ConfigurationParameter fileParameter;
 
 	public FileParameter(MavenEclipseContext context, ConfigurationParameter fileParameter) {
 		this.context = context;
@@ -34,7 +44,7 @@ abstract class FileParameter {
 	 * @return the child value
 	 */
 	protected final String getChildValue() {
-		return fileParameter.getChild(getChildName()).getValue();
+		return this.fileParameter.getChild(getChildName()).getValue();
 	}
 
 	/**
@@ -42,18 +52,21 @@ abstract class FileParameter {
 	 * @throws Exception
 	 */
 	public void copyToProject() throws Exception {
-		String name = fileParameter.getChild("name").getValue();
-		IFile projectFile = context.getProject().getFile(name);
+		String name = this.fileParameter.getChild("name").getValue();
+		IFile projectFile = this.context.getProject().getFile(name);
 		if (projectFile.exists()) {
 			try {
-				projectFile.delete(true, context.getMonitor());
-			} catch (CoreException e) {
+				projectFile.delete(true, this.context.getMonitor());
+			}
+			catch (CoreException ex) {
 			}
 		}
 		InputStream content = getContent();
 		try {
-			projectFile.create(new BufferedInputStream(content), true, context.getMonitor());
-		} finally {
+			projectFile.create(new BufferedInputStream(content), true,
+					this.context.getMonitor());
+		}
+		finally {
 			content.close();
 		}
 	}
@@ -64,4 +77,5 @@ abstract class FileParameter {
 	 * @throws Exception
 	 */
 	protected abstract InputStream getContent() throws Exception;
+
 }

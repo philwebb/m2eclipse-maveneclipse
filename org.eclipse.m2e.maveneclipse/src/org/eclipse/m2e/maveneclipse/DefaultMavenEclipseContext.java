@@ -1,12 +1,13 @@
 /*
- * Copyright 2000-2011 the original author or authors.
- * 
+ * Copyright 2000-2014 the original author or authors.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.eclipse.m2e.maveneclipse;
 
 import org.apache.maven.model.Plugin;
@@ -19,15 +20,17 @@ import org.eclipse.m2e.maveneclipse.configuration.MavenEclipseConfiguration;
 
 /**
  * Default implementation of {@link MavenEclipseContext}.
- * 
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
 public class DefaultMavenEclipseContext implements MavenEclipseContext {
 
-	private ProjectConfigurationRequest request;
-	private IProgressMonitor monitor;
-	private MavenEclipseConfiguration pluginConfiguration;
+	private final ProjectConfigurationRequest request;
+
+	private final IProgressMonitor monitor;
+
+	private final MavenEclipseConfiguration pluginConfiguration;
 
 	/**
 	 * Create a new {@link DefaultMavenEclipseContext} instance.
@@ -35,25 +38,27 @@ public class DefaultMavenEclipseContext implements MavenEclipseContext {
 	 * @param monitor the monitor
 	 * @param plugin the plugin
 	 */
-	public DefaultMavenEclipseContext(ProjectConfigurationRequest request, IProgressMonitor monitor, Plugin plugin) {
+	public DefaultMavenEclipseContext(ProjectConfigurationRequest request,
+			IProgressMonitor monitor, Plugin plugin) {
 		this.request = request;
 		this.monitor = monitor;
 		this.pluginConfiguration = new DefaultMavenEclipseConfiguration(plugin);
 	}
 
 	public IProject getProject() {
-		return request.getProject();
+		return this.request.getProject();
 	}
 
 	public IProgressMonitor getMonitor() {
-		return monitor;
+		return this.monitor;
 	}
 
 	public MavenProject getMavenProject() {
-		return request.getMavenProject();
+		return this.request.getMavenProject();
 	}
 
 	public MavenEclipseConfiguration getPluginConfiguration() {
-		return pluginConfiguration;
+		return this.pluginConfiguration;
 	}
+
 }

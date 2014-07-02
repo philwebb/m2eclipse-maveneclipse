@@ -1,12 +1,13 @@
 /*
- * Copyright 2000-2011 the original author or authors.
- * 
+ * Copyright 2000-2014 the original author or authors.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.eclipse.m2e.maveneclipse.handler;
 
 import java.util.ArrayList;
@@ -21,9 +22,10 @@ import org.eclipse.m2e.maveneclipse.handler.additionalprojectfacets.AdditionalPr
 import org.eclipse.m2e.maveneclipse.handler.additionalprojectnatures.AdditionalProjectNaturesConfigurationHandler;
 
 /**
- * Performs the actual work of configuring an eclipse project from {@link MavenEclipseConfiguration} in the specified
- * {@link MavenEclipseContext} as defined by the <tt>maven-eclipse-plugin</tt>.
- * 
+ * Performs the actual work of configuring an eclipse project from
+ * {@link MavenEclipseConfiguration} in the specified {@link MavenEclipseContext} as
+ * defined by the <tt>maven-eclipse-plugin</tt>.
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
@@ -33,7 +35,6 @@ public class ConfigurationHandlers {
 
 	/**
 	 * Create a {@link ConfigurationHandlers} instance with the specified handlers.
-	 * 
 	 * @param configurationHandlers
 	 */
 	protected ConfigurationHandlers(ConfigurationHandler[] configurationHandlers) {
@@ -44,17 +45,19 @@ public class ConfigurationHandlers {
 	}
 
 	/**
-	 * Create a {@link ConfigurationHandlers} instance with handlers loaded from extension points.
+	 * Create a {@link ConfigurationHandlers} instance with handlers loaded from extension
+	 * points.
 	 * @throws CoreException
 	 */
 	public ConfigurationHandlers() throws CoreException {
 		List<ConfigurationHandler> handlers = new ArrayList<ConfigurationHandler>();
-		//NOTE: order here is critical, natures must be applied before facets
+		// NOTE: order here is critical, natures must be applied before facets
 		handlers.add(new AdditionalConfigConfigurationHandler());
 		handlers.add(new AdditionalProjectNaturesConfigurationHandler());
 		handlers.add(new AdditionalProjectFacetsConfigurationHandler());
 		handlers.add(new AdditionalBuildCommandsConfigurationHandler());
-		this.configurationHandlers = handlers.toArray(new ConfigurationHandler[handlers.size()]);
+		this.configurationHandlers = handlers.toArray(new ConfigurationHandler[handlers
+				.size()]);
 	}
 
 	/**
@@ -62,12 +65,11 @@ public class ConfigurationHandlers {
 	 * @return the configuration handlers
 	 */
 	protected final ConfigurationHandler[] getConfigurationHandlers() {
-		return configurationHandlers;
+		return this.configurationHandlers;
 	}
 
 	/**
 	 * Handle the configuration of the project.
-	 * 
 	 * @param context the context
 	 * @throws Exception
 	 */
@@ -78,4 +80,5 @@ public class ConfigurationHandlers {
 			}
 		}
 	}
+
 }

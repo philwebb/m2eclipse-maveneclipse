@@ -1,3 +1,13 @@
+/*
+ * Copyright 2000-2014 the original author or authors.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalprojectfacets;
 
 import org.apache.maven.model.Plugin;
@@ -19,9 +29,9 @@ import org.eclipse.wst.common.frameworks.datamodel.IDataModel;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
 /**
- * {@link FacetConfigProvider} for <tt>jst.web</tt> facets. Sets the web source directory to prevent superfluous folders
- * being created.
- * 
+ * {@link FacetConfigProvider} for <tt>jst.web</tt> facets. Sets the web source directory
+ * to prevent superfluous folders being created.
+ *
  * @author Phillip Webb
  */
 public class JstWebFacetConfigProvider implements FacetConfigProvider {
@@ -33,8 +43,8 @@ public class JstWebFacetConfigProvider implements FacetConfigProvider {
 	}
 
 	/**
-	 * Sets the java output directory. This is required here to ensure that the
-	 * correct <tt>java-output-path</tt> is set by the {@link WebFacetInstallDelegate}. 
+	 * Sets the java output directory. This is required here to ensure that the correct
+	 * <tt>java-output-path</tt> is set by the {@link WebFacetInstallDelegate}.
 	 * @param context the context
 	 * @throws JavaModelException
 	 */
@@ -43,29 +53,38 @@ public class JstWebFacetConfigProvider implements FacetConfigProvider {
 		IProject project = context.getProject();
 		IJavaProject javaProject = JavaCore.create(project);
 		if (javaProject != null) {
-			String outputDirectory = context.getMavenProject().getBuild().getOutputDirectory();
-			IPath outputPath = MavenProjectUtils.getProjectRelativePath(project, outputDirectory);
+			String outputDirectory = context.getMavenProject().getBuild()
+					.getOutputDirectory();
+			IPath outputPath = MavenProjectUtils.getProjectRelativePath(project,
+					outputDirectory);
 			IFolder outputFolder = project.getFolder(outputPath);
-			javaProject.setOutputLocation(outputFolder.getFullPath(), context.getMonitor());
+			javaProject.setOutputLocation(outputFolder.getFullPath(),
+					context.getMonitor());
 		}
 	}
 
-	public Object getFacetConfig(MavenEclipseContext context, IProjectFacetVersion projectFacetVersion) throws CoreException {
+	public Object getFacetConfig(MavenEclipseContext context,
+			IProjectFacetVersion projectFacetVersion) throws CoreException {
 		String configFolder = DEFAULT_WAR_SOURCE;
-		Plugin plugin = context.getMavenProject().getPlugin("org.apache.maven.plugins:maven-war-plugin");
+		Plugin plugin = context.getMavenProject().getPlugin(
+				"org.apache.maven.plugins:maven-war-plugin");
 		if (plugin != null) {
 			Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();
 			if (configuration != null) {
-				Xpp3Dom[] warSourceConfiguration = configuration.getChildren("warSourceDirectory");
+				Xpp3Dom[] warSourceConfiguration = configuration
+						.getChildren("warSourceDirectory");
 				if (warSourceConfiguration != null && warSourceConfiguration.length > 0) {
 					configFolder = warSourceConfiguration[0].getValue();
-					configFolder = MavenProjectUtils.getProjectRelativePath(context.getProject(), configFolder)
-							.toOSString();
+					configFolder = MavenProjectUtils.getProjectRelativePath(
+							context.getProject(), configFolder).toOSString();
 				}
 			}
 		}
-		IDataModel webFacetConfig = DataModelFactory.createDataModel(new WebFacetInstallDataModelProvider());
-		webFacetConfig.setProperty(IJ2EEModuleFacetInstallDataModelProperties.CONFIG_FOLDER, configFolder);
+		IDataModel webFacetConfig = DataModelFactory
+				.createDataModel(new WebFacetInstallDataModelProvider());
+		webFacetConfig.setProperty(
+				IJ2EEModuleFacetInstallDataModelProperties.CONFIG_FOLDER, configFolder);
 		return webFacetConfig;
 	}
+
 }

@@ -1,8 +1,18 @@
+/*
+ * Copyright 2000-2014 the original author or authors.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ *
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalbuildcommands;
 
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertSame;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -24,14 +34,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Tests for {@link BuildCommandFactoryImpl}.
- * 
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
 @RunWith(MockitoJUnitRunner.class)
 public class BuildCommandFactoryImplTest {
 
-	private BuildCommandFactoryImpl factory = new BuildCommandFactoryImpl();
+	private final BuildCommandFactoryImpl factory = new BuildCommandFactoryImpl();
 
 	@Captor
 	private ArgumentCaptor<Map<String, String>> argument;
@@ -51,7 +61,8 @@ public class BuildCommandFactoryImplTest {
 		given(projectDescription.newCommand()).willReturn(newCommand);
 
 		// When
-		ICommand createdICommand = factory.createCommand(projectDescription, buildCommandConfigParameter);
+		ICommand createdICommand = this.factory.createCommand(projectDescription,
+				buildCommandConfigParameter);
 
 		// Then
 		assertSame(newCommand, createdICommand);
@@ -68,32 +79,39 @@ public class BuildCommandFactoryImplTest {
 				BuildCommandFactoryImpl.BUILD_COMMAND_ELEMENT_NAME);
 
 		ConfigurationParameter nameConfigurationParameter = mock(ConfigurationParameter.class);
-		given(buildCommandConfigParameter.getChild(BuildCommandFactoryImpl.NAME_ELEMENT_NAME)).willReturn(
+		given(
+				buildCommandConfigParameter
+						.getChild(BuildCommandFactoryImpl.NAME_ELEMENT_NAME)).willReturn(
 				nameConfigurationParameter);
 		String buildCommandName = "my.build.command";
 		given(nameConfigurationParameter.getValue()).willReturn(buildCommandName);
 
 		String argumentName = "test-arg";
 		String argumentValue = "test-value";
-		ConfigurationParameter argumentsParameter = createArgumentConfigurationParameter(argumentName, argumentValue);
-		given(buildCommandConfigParameter.getChild(BuildCommandFactoryImpl.ARGUMENTS_ELEMENT_NAME)).willReturn(argumentsParameter);
+		ConfigurationParameter argumentsParameter = createArgumentConfigurationParameter(
+				argumentName, argumentValue);
+		given(
+				buildCommandConfigParameter
+						.getChild(BuildCommandFactoryImpl.ARGUMENTS_ELEMENT_NAME))
+				.willReturn(argumentsParameter);
 
 		ICommand newCommand = mock(ICommand.class);
 		given(projectDescription.newCommand()).willReturn(newCommand);
 
 		// When
-		ICommand createdICommand = factory.createCommand(projectDescription, buildCommandConfigParameter);
+		ICommand createdICommand = this.factory.createCommand(projectDescription,
+				buildCommandConfigParameter);
 
-		// Then	
+		// Then
 		assertSame(newCommand, createdICommand);
 		verify(newCommand).setBuilderName(buildCommandName);
 
-		verify(newCommand).setArguments(argument.capture());
-		Map<String, String> actualArguments = argument.getValue();
-		assertThat(actualArguments.keySet().size(), is(1));
+		verify(newCommand).setArguments(this.argument.capture());
+		Map<String, String> actualArguments = this.argument.getValue();
+		assertThat(actualArguments.keySet().size(), equalTo(1));
 		String firstKey = actualArguments.keySet().iterator().next();
-		assertThat(firstKey, is(argumentName));
-		assertThat(actualArguments.get(firstKey), is(argumentValue));
+		assertThat(firstKey, equalTo(argumentName));
+		assertThat(actualArguments.get(firstKey), equalTo(argumentValue));
 
 	}
 
@@ -104,14 +122,16 @@ public class BuildCommandFactoryImplTest {
 		ConfigurationParameter buildCommandConfigParameter = mock(ConfigurationParameter.class);
 
 		// When
-		ICommand actualICommand = factory.createCommand(projectDescription, buildCommandConfigParameter);
+		ICommand actualICommand = this.factory.createCommand(projectDescription,
+				buildCommandConfigParameter);
 
 		// Then
 		verifyZeroInteractions(projectDescription);
 		assertNull(actualICommand);
 	}
 
-	private ConfigurationParameter createArgumentConfigurationParameter(String argumentName, String argumentValue) {
+	private ConfigurationParameter createArgumentConfigurationParameter(
+			String argumentName, String argumentValue) {
 		ConfigurationParameter argumentsParameter = mock(ConfigurationParameter.class);
 		List<ConfigurationParameter> arguments = new ArrayList<ConfigurationParameter>();
 		ConfigurationParameter argumentParameter = mock(ConfigurationParameter.class);

@@ -1,3 +1,13 @@
+/*
+ * Copyright 2000-2014 the original author or authors.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ *
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.eclipse.m2e.maveneclipse;
 
 import static org.mockito.BDDMockito.given;
@@ -22,16 +32,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Tests for {@link MavenEclipseProjectConfigurator}.
- * 
+ *
  * @author Alex Clarke
  * @author Phillip Webb
- * 
+ *
  */
 @RunWith(MockitoJUnitRunner.class)
 public class MavenEclipseProjectConfiguratorTest {
 
 	@InjectMocks
-	private MavenEclipseProjectConfigurator mavenEclipseProjectConfigurator = new MavenEclipseProjectConfigurator();
+	private final MavenEclipseProjectConfigurator mavenEclipseProjectConfigurator = new MavenEclipseProjectConfigurator();
 
 	@Mock
 	private ConfigurationHandlers configurationHandlers;
@@ -49,14 +59,17 @@ public class MavenEclipseProjectConfiguratorTest {
 		plugins.add(mavenEclipsePlugin);
 		given(mavenProject.getBuildPlugins()).willReturn(plugins);
 
-		given(mavenEclipsePlugin.getArtifactId()).willReturn(MavenEclipseProjectConfigurator.ARTIFACT_ID);
-		given(mavenEclipsePlugin.getGroupId()).willReturn(MavenEclipseProjectConfigurator.GROUP_ID);
+		given(mavenEclipsePlugin.getArtifactId()).willReturn(
+				MavenEclipseProjectConfigurator.ARTIFACT_ID);
+		given(mavenEclipsePlugin.getGroupId()).willReturn(
+				MavenEclipseProjectConfigurator.GROUP_ID);
 
 		// When
-		mavenEclipseProjectConfigurator.configureRawClasspath(request, null, monitor);
+		this.mavenEclipseProjectConfigurator
+				.configureRawClasspath(request, null, monitor);
 
 		// Then
-		verify(configurationHandlers).handle(any(MavenEclipseContext.class));
+		verify(this.configurationHandlers).handle(any(MavenEclipseContext.class));
 	}
 
 	@Test
@@ -71,10 +84,11 @@ public class MavenEclipseProjectConfiguratorTest {
 		given(mavenProject.getBuildPlugins()).willReturn(plugins);
 
 		// When
-		mavenEclipseProjectConfigurator.configureRawClasspath(request, null, monitor);
+		this.mavenEclipseProjectConfigurator
+				.configureRawClasspath(request, null, monitor);
 
 		// Then
-		verifyZeroInteractions(configurationHandlers);
+		verifyZeroInteractions(this.configurationHandlers);
 	}
 
 }

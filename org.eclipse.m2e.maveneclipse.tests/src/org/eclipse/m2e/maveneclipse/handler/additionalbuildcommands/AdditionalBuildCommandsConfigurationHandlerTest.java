@@ -1,24 +1,24 @@
 /*
- * Copyright 2000-2011 the original author or authors.
- *  
+ * Copyright 2000-2014 the original author or authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.eclipse.m2e.maveneclipse.handler.additionalbuildcommands;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -45,7 +45,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Tests for {@link AdditionalBuildCommandsConfigurationHandler}.
- * 
+ *
  * @author Alex Clarke
  * @author Phillip Webb
  */
@@ -53,38 +53,38 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class AdditionalBuildCommandsConfigurationHandlerTest {
 
 	@InjectMocks
-	private AdditionalBuildCommandsConfigurationHandler additionalBuildCommandsConfigurationHandler = new AdditionalBuildCommandsConfigurationHandler();
+	private final AdditionalBuildCommandsConfigurationHandler additionalBuildCommandsConfigurationHandler = new AdditionalBuildCommandsConfigurationHandler();
 
 	@Mock
 	private BuildCommandFactory commandFactory;
 
 	@Mock
-	private MavenEclipseContext context = mock(MavenEclipseContext.class);
+	private final MavenEclipseContext context = mock(MavenEclipseContext.class);
 
 	@Mock
-	private IProjectDescription projectDescription = mock(IProjectDescription.class);
+	private final IProjectDescription projectDescription = mock(IProjectDescription.class);
 
 	@Mock
-	private IProject project = mock(IProject.class);
+	private final IProject project = mock(IProject.class);
 
 	@Mock
-	private ICommand initialBuildCommand = mock(ICommand.class);
+	private final ICommand initialBuildCommand = mock(ICommand.class);
 
 	@Mock
-	private IProgressMonitor monitor = mock(IProgressMonitor.class);
+	private final IProgressMonitor monitor = mock(IProgressMonitor.class);
 
 	@Captor
 	ArgumentCaptor<ICommand[]> argument;
 
 	@Before
 	public void setupBasicContextWithInitialBuildCommand() throws Exception {
-		given(context.getProject()).willReturn(project);
-		given(project.getDescription()).willReturn(projectDescription);
+		given(this.context.getProject()).willReturn(this.project);
+		given(this.project.getDescription()).willReturn(this.projectDescription);
 
-		given(initialBuildCommand.getBuilderName()).willReturn("initial");
-		ICommand[] initialBuildSpecs = { initialBuildCommand };
-		given(projectDescription.getBuildSpec()).willReturn(initialBuildSpecs);
-		given(context.getMonitor()).willReturn(monitor);
+		given(this.initialBuildCommand.getBuilderName()).willReturn("initial");
+		ICommand[] initialBuildSpecs = { this.initialBuildCommand };
+		given(this.projectDescription.getBuildSpec()).willReturn(initialBuildSpecs);
+		given(this.context.getMonitor()).willReturn(this.monitor);
 	}
 
 	@Test
@@ -92,35 +92,39 @@ public class AdditionalBuildCommandsConfigurationHandlerTest {
 		// Given
 		ConfigurationParameter additionalBuildCommandParameter = mock(ConfigurationParameter.class);
 		List<ConfigurationParameter> buildCommandParameters = new ArrayList<ConfigurationParameter>();
-		given(additionalBuildCommandParameter.getChildren()).willReturn(buildCommandParameters);
+		given(additionalBuildCommandParameter.getChildren()).willReturn(
+				buildCommandParameters);
 
 		ConfigurationParameter firstBuildCommandParameter = mock(ConfigurationParameter.class);
 		buildCommandParameters.add(firstBuildCommandParameter);
 		ICommand iCommandForFirst = mock(ICommand.class);
 		given(iCommandForFirst.getBuilderName()).willReturn("first");
-		given(commandFactory.createCommand(projectDescription, firstBuildCommandParameter))
-				.willReturn(iCommandForFirst);
+		given(
+				this.commandFactory.createCommand(this.projectDescription,
+						firstBuildCommandParameter)).willReturn(iCommandForFirst);
 
 		ConfigurationParameter secondBuildCommandParameter = mock(ConfigurationParameter.class);
 		buildCommandParameters.add(secondBuildCommandParameter);
 		ICommand iCommandForSecond = mock(ICommand.class);
 		given(iCommandForSecond.getBuilderName()).willReturn("second");
-		given(commandFactory.createCommand(projectDescription, secondBuildCommandParameter)).willReturn(
-				iCommandForSecond);
+		given(
+				this.commandFactory.createCommand(this.projectDescription,
+						secondBuildCommandParameter)).willReturn(iCommandForSecond);
 
 		// When
-		additionalBuildCommandsConfigurationHandler.handle(context, additionalBuildCommandParameter);
+		this.additionalBuildCommandsConfigurationHandler.handle(this.context,
+				additionalBuildCommandParameter);
 
 		// Then
-		verify(projectDescription).setBuildSpec(argument.capture());
+		verify(this.projectDescription).setBuildSpec(this.argument.capture());
 
-		List<ICommand> actualBuildSpec = Arrays.asList(argument.getValue());
-		assertThat(actualBuildSpec.size(), is(3));
-		assertTrue(actualBuildSpec.contains(initialBuildCommand));
+		List<ICommand> actualBuildSpec = Arrays.asList(this.argument.getValue());
+		assertThat(actualBuildSpec.size(), equalTo(3));
+		assertTrue(actualBuildSpec.contains(this.initialBuildCommand));
 		assertTrue(actualBuildSpec.contains(iCommandForFirst));
 		assertTrue(actualBuildSpec.contains(iCommandForSecond));
 
-		verify(project).setDescription(projectDescription, monitor);
+		verify(this.project).setDescription(this.projectDescription, this.monitor);
 	}
 
 	@Test
@@ -129,13 +133,16 @@ public class AdditionalBuildCommandsConfigurationHandlerTest {
 		MavenEclipseContext context = mock(MavenEclipseContext.class);
 		MavenEclipseConfiguration configuration = mock(MavenEclipseConfiguration.class);
 		given(context.getPluginConfiguration()).willReturn(configuration);
-		given(configuration.containsParamter(additionalBuildCommandsConfigurationHandler.getParamterName()))
-				.willReturn(true);
+		given(
+				configuration
+						.containsParamter(this.additionalBuildCommandsConfigurationHandler
+								.getParamterName())).willReturn(true);
 
 		// When
-		boolean canHandle = additionalBuildCommandsConfigurationHandler.canHandle(context);
+		boolean canHandle = this.additionalBuildCommandsConfigurationHandler
+				.canHandle(context);
 
-		assertTrue(canHandle);
+		assertThat(canHandle, equalTo(true));
 	}
 
 	@Test
@@ -144,13 +151,16 @@ public class AdditionalBuildCommandsConfigurationHandlerTest {
 		MavenEclipseContext context = mock(MavenEclipseContext.class);
 		MavenEclipseConfiguration configuration = mock(MavenEclipseConfiguration.class);
 		given(context.getPluginConfiguration()).willReturn(configuration);
-		given(configuration.getParamter(additionalBuildCommandsConfigurationHandler.getParamterName()))
-				.willReturn(null);
+		given(
+				configuration
+						.getParamter(this.additionalBuildCommandsConfigurationHandler
+								.getParamterName())).willReturn(null);
 
 		// When
-		boolean canHandle = additionalBuildCommandsConfigurationHandler.canHandle(context);
+		boolean canHandle = this.additionalBuildCommandsConfigurationHandler
+				.canHandle(context);
 
-		assertFalse(canHandle);
+		assertThat(canHandle, equalTo(false));
 	}
 
 }
