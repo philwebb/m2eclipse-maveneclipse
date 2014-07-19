@@ -40,11 +40,8 @@ class LocationFileParameter extends FileParameter {
 	@Override
 	protected InputStream getContent() throws Exception {
 		String location = getChildValue();
-		File locationFile;
-		if (location.startsWith("/") || location.startsWith("\\")) {
-			locationFile = new File(location);
-		}
-		else {
+		File locationFile = new File(location);
+		if (!locationFile.isAbsolute()) {
 			locationFile = new File(this.locationRoot, location);
 		}
 		if (!locationFile.exists()) {
