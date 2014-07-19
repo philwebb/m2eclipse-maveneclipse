@@ -5,6 +5,12 @@ import static org.junit.Assert.*;
 import org.eclipse.osgi.util.NLS;
 import org.junit.Test;
 
+/**
+ * Tests for {@link Messages}.
+ * 
+ * @author Raphael von der Grün
+ *
+ */
 public class MessagesTest {
 
 	@Test
