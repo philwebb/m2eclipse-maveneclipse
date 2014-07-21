@@ -15,7 +15,7 @@ import org.junit.Test;
  * @author Raphael von der Grün
  */
 public class LocationFileParameterTest {
-	
+
 	private static final String THIS_DIRECTORY = "./src/org/eclipse/m2e/maveneclipse/handler/additionalconfig";
 
 	@Test
@@ -24,10 +24,10 @@ public class LocationFileParameterTest {
 		ConfigurationParameter fileParam = mock(ConfigurationParameter.class);
 		MavenEclipseContext context = mock(MavenEclipseContext.class);
 		File locationRoot = new File(THIS_DIRECTORY).getAbsoluteFile();
-		
+
 		when(fileParam.getChild(LocationFileParameter.CHILD_NAME)).thenReturn(fileParam);
 		when(fileParam.getValue()).thenReturn("content.txt");
-		
+
 		LocationFileParameter param = new LocationFileParameter(context, fileParam, locationRoot);
 		assertNotNull(param.getContent());
 	}
