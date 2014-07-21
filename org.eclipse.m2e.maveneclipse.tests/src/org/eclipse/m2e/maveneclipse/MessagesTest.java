@@ -12,10 +12,9 @@ import org.junit.Test;
  *
  */
 public class MessagesTest {
-	
+
 	private static final String TEST_FILE = "test.file";
-	private static final String EXPECTED_MESSAGE =
-			"Error importing maven-eclipse-plugin settings; " + TEST_FILE;
+	private static final String EXPECTED_MESSAGE = "Error importing maven-eclipse-plugin settings; " + TEST_FILE;
 
 	@Test
 	public void shouldHaveConfiguratorErrorMessage() {
