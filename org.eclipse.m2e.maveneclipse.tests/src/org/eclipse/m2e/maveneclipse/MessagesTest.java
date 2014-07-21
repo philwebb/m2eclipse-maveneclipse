@@ -12,12 +12,15 @@ import org.junit.Test;
  *
  */
 public class MessagesTest {
+	
+	private static final String TEST_FILE = "test.file";
+	private static final String EXPECTED_MESSAGE =
+			"Error importing maven-eclipse-plugin settings; " + TEST_FILE;
 
 	@Test
 	public void shouldHaveConfiguratorErrorMessage() {
-		String fileName = "test.file";
-		String msg = NLS.bind(Messages.mavenEclipseProjectConfiguratorError, "test.file");
-		assertEquals("Error importing maven-eclipse-plugin settings; " + fileName, msg);
+		String msg = NLS.bind(Messages.mavenEclipseProjectConfiguratorError, TEST_FILE);
+		assertEquals(EXPECTED_MESSAGE, msg);
 	}
 
 }
