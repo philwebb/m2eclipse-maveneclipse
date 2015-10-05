@@ -1,0 +1,6 @@
+= Release process
+
+* Add `KEY=...` to `.secrets`
+* Run the release script: `RELEASE_VERSION=1.2.0 NEXT_VERSION=1.2.1-SNAPSHOT ./release.sh`
+* Edit `publish-pom.xml` and add the new item to `repository` (under the `mirror` goal)
+* Run `./publish.sh`
