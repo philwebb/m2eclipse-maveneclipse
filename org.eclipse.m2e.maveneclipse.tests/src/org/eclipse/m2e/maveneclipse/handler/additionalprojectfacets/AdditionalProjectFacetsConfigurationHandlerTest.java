@@ -73,7 +73,7 @@ public class AdditionalProjectFacetsConfigurationHandlerTest {
 	@Test
 	public void shouldCreateFacets() throws Exception {
 		List<ConfigurationParameter> children = new ArrayList<ConfigurationParameter>();
-		children.add(mockChild("jst.jsf", "2.0"));
+		children.add(mockChild("wst.jsdt.web", "1.0"));
 		given(this.paramter.getChildren()).willReturn(children);
 		this.handler.handle(this.context);
 		verify(this.facetedProject).modify(this.actionsCaptor.capture(),
@@ -83,9 +83,9 @@ public class AdditionalProjectFacetsConfigurationHandlerTest {
 
 		assertThat(actions.get(0).getType(), equalTo(IFacetedProject.Action.Type.INSTALL));
 		assertThat(actions.get(0).getProjectFacetVersion().getProjectFacet().getId(),
-				equalTo("jst.jsf"));
+				equalTo("wst.jsdt.web"));
 		assertThat(actions.get(0).getProjectFacetVersion().getVersionString(),
-				equalTo("2.0"));
+				equalTo("1.0"));
 	}
 
 	private ConfigurationParameter mockChild(String name, String value) {

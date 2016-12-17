@@ -7,7 +7,7 @@
       <configurator
             class="org.eclipse.m2e.maveneclipse.MavenEclipseProjectConfigurator"
             id="org.eclipse.m2.maveneclipse.configurator"
-            secondaryTo="org.eclipse.m2e.jdt.javaConfigurator">
+            runsAfter="org.eclipse.m2e.jdt.javaConfigurator">
       </configurator>
    </extension>
    <extension

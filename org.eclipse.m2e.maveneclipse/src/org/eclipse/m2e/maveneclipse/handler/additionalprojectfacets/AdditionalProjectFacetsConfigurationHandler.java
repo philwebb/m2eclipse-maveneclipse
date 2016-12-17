@@ -97,6 +97,7 @@ public class AdditionalProjectFacetsConfigurationHandler extends
 			return ProjectFacetsManager.getProjectFacet(id);
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
