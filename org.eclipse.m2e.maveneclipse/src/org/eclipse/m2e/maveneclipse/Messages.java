@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.m2e.maveneclipse.internal.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.m2e.maveneclipse.messages"; //$NON-NLS-1$
 
 	public static String mavenEclipseProjectConfiguratorError;
 
