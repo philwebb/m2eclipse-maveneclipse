@@ -11,8 +11,8 @@
 	<version>1.4.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
-		<tycho-version>1.0.0</tycho-version>
-		<tycho-extras-version>1.0.0</tycho-extras-version>
+		<tycho-version>1.1.0</tycho-version>
+		<tycho-extras-version>1.1.0</tycho-extras-version>
 	</properties>
 	<modules>
 		<module>org.eclipse.m2e.maveneclipse</module>
