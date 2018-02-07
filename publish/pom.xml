@@ -38,6 +38,10 @@
 							<url>https://dl.bintray.com/philwebb/m2eclipse-maveneclipse/1.3.0</url>
 							<layout>p2</layout>
 						</repository>
+						<repository>
+							<url>https://dl.bintray.com/philwebb/m2eclipse-maveneclipse/1.4.0</url>
+							<layout>p2</layout>
+						</repository>
 					</source>
 					<destination>${project.build.directory}/repository</destination>
 					<compress>true</compress>
