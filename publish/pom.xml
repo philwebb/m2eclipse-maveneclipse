@@ -60,6 +60,7 @@
 								<unzip src="${mvnproject.build.directory}/repository/artifacts.jar" dest="${mvnproject.build.directory}/repackage"/>
 								<replace file="${mvnproject.build.directory}/repackage/artifacts.xml" token="${repoUrl}" value="@@@{repoUrl}/@@@{version}"/>
 								<replace file="${mvnproject.build.directory}/repackage/artifacts.xml" token="@@@" value="$"/>
+								<touch file="${mvnproject.build.directory}/repackage/artifacts.xml" millis="0" />
 								<zip destfile="${mvnproject.build.directory}/repository/artifacts.jar" update="true" basedir="${mvnproject.build.directory}/repackage"/>
 							</target>
 						</configuration>
